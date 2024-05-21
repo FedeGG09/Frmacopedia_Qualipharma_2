@@ -107,26 +107,30 @@ st.set_page_config(page_title="Qualipharma - Analytics Town", page_icon="🧪")
 st.title("Qualipharma - Analytics Town")
 
 st.sidebar.image("https://raw.githubusercontent.com/FedeGG09/Qualipharma_2/main/data/input/cropped-qualipharma_isologo_print-e1590563965410-300x300.png", use_column_width=True)  # Añadir logo
+
+# Sección para cargar el manual de referencia
 st.sidebar.header("Cargar Manual de Referencia")
 uploaded_reference_file = st.sidebar.file_uploader("Subir archivo de referencia", type=["pdf", "txt", "docx"])
 if uploaded_reference_file:
     reference_file_type = uploaded_reference_file.name.split(".")[-1]
     st.sidebar.success(f"Archivo de referencia {uploaded_reference_file.name} cargado con éxito.")
 
+# Sección para cargar el documento a comparar
 st.sidebar.header("Cargar Documento a Comparar")
 uploaded_compare_file = st.sidebar.file_uploader("Subir archivo a comparar", type=["pdf", "txt", "docx"])
 if uploaded_compare_file:
     compare_file_type = uploaded_compare_file.name.split(".")[-1]
     st.sidebar.success(f"Archivo a comparar {uploaded_compare_file.name} cargado con éxito.")
 
+# Botón para procesar documentos
 if st.sidebar.button("Procesar Documentos") and uploaded_reference_file and uploaded_compare_file:
     procesar_documentos(uploaded_reference_file, uploaded_compare_file, reference_file_type, compare_file_type)
 
+# Botón para cargar y vectorizar el manual
 if st.sidebar.button("Cargar y Vectorizar Manual") and uploaded_reference_file:
     texto_manual = extraer_texto(reference_file_type, uploaded_reference_file)
     indice_manual = [
         "2.1. Minor variations of Type IA",
-        "2.1.1. Submission of Type IA notifications",
         "2.1.2. Type IA variations review for mutual recognition procedure",
         "2.1.3. Type IA variations review for purely national procedure",
         "2.1.4. Type IA variations review for centralised procedure",
@@ -151,6 +155,7 @@ if st.sidebar.button("Cargar y Vectorizar Manual") and uploaded_reference_file:
     tokens_referencia = load_manual(texto_manual, indice_manual)
     st.session_state['manual_cargado'] = True
 
+# Sección para comparar documentos adicionales
 st.sidebar.header("Comparar Documentos Adicionales")
 uploaded_file1 = st.sidebar.file_uploader("Subir primer archivo adicional", type=["pdf", "txt", "docx"])
 uploaded_file2 = st.sidebar.file_uploader("Subir segundo archivo adicional", type=["pdf", "txt", "docx"])
@@ -159,6 +164,7 @@ if uploaded_file1 and uploaded_file2:
     file2_type = uploaded_file2.name.split(".")[-1]
     st.sidebar.success(f"Archivos adicionales {uploaded_file1.name} y {uploaded_file2.name} cargados con éxito.")
 
+# Botón para comparar documentos adicionales
 if st.sidebar.button("Comparar Documentos Adicionales") and uploaded_file1 and uploaded_file2:
     if st.session_state.get('manual_cargado', False):
         tokens_referencia = st.session_state.get('tokens_referencia', [])
@@ -168,6 +174,7 @@ if st.sidebar.button("Comparar Documentos Adicionales") and uploaded_file1 and u
     else:
         st.error("Primero debes cargar y vectorizar el manual de referencia.")
 
+# Botón para verificar cumplimiento de diferencias
 if st.sidebar.button("Verificar Cumplimiento de Diferencias") and uploaded_file1 and uploaded_file2:
     if st.session_state.get('manual_cargado', False):
         tokens_referencia = st.session_state.get('tokens_referencia', [])
